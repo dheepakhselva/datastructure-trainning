@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent a print job
+typedef struct PrintJob {
+    int jobID;
+    int length;
+} PrintJob;
+
+// Structure to represent a node in the queue
+typedef struct Node {
+    PrintJob data;
+    struct Node* next;
+} Node;
+
+// Structure to represent the queue
+typedef struct Queue {
+    Node* front;
+    Node* rear;
+} Queue;
+
+// Function to create a new node
+Node* createNode(PrintJob job) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = job;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to initialize the queue
+Queue* createQueue() {
+    Queue* queue = (Queue*)malloc(sizeof(Queue));
+    queue->front = queue->rear = NULL;
+    return queue;
+}
+
+// Function to check if the queue is empty
+int isEmpty(Queue* queue) {
+    return queue->front == NULL;
+}
+
+// Function to enqueue a print job into the queue
+void enqueue(Queue* queue, PrintJob job) {
+    Node* newNode = createNode(job);
+    if (isEmpty(queue)) {
+        queue->front = queue->rear = newNode;
+    } else {
+        queue->rear->next = newNode;
+        queue->rear = newNode;
+    }
+}
+
+// Function to dequeue a print job from the queue
+PrintJob dequeue(Queue* queue) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty.\n");
+        exit(EXIT_FAILURE);
+    }
+    Node* temp = queue->front;
+    PrintJob job = temp->data;
+    queue->front = queue->front->next;
+    free(temp);
+    return job;
+}
+
+int main() {
+    Queue* printerQueue = createQueue();
+
+    // Sample print jobs
+    PrintJob job1 = {1, 5};
+    PrintJob job2 = {2, 3};
+    PrintJob job3 = {3, 7};
+
+    // Enqueue the print jobs
+    enqueue(printerQueue, job1);
+    enqueue(printerQueue, job2);
+    enqueue(printerQueue, job3);
+
+    // Dequeue and process the print jobs
+    while (!isEmpty(printerQueue)) {
+        PrintJob currentJob = dequeue(printerQueue);
+        printf("Processing job ID %d with length %d...\n", currentJob.jobID, currentJob.length);
+        // Simulate printing process
+    }
+
+    return 0;
+}
